@@ -1,6 +1,5 @@
 package com.group.libraryapp.controller.user;
 
-import com.group.libraryapp.domain.user.User;
 import com.group.libraryapp.dto.user.request.UserCreateRequest;
 import com.group.libraryapp.dto.user.request.UserUpdateRequest;
 import com.group.libraryapp.dto.user.response.UserResponse;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -49,6 +47,11 @@ public UserController(JdbcTemplate jdbcTemplate){
     }
     @PutMapping("/user")
     public void updateUser(@RequestBody UserUpdateRequest request){
+    String readSql = " * FROM user WHERE id = ?"; //유저가 존재하는지 SELECT 통하여 확인
+    boolean isUserNotExist = jdbcTemplate.query(readSql, (rs, rowNum) -> 0, request.getId()).isEmpty();
+    if(isUserNotExist){
+        throw new IllegalArgumentException();
+    }
     String sql = "UPDATE user SET name = ? WHERE id = ?";
     jdbcTemplate.update(sql, request.getName(),request.getId());
 
@@ -59,5 +62,7 @@ public UserController(JdbcTemplate jdbcTemplate){
     String sql= "DELETE FROM user WHERE name = ?";
     jdbcTemplate.update(sql, name);
     }
+
+
 
 }
