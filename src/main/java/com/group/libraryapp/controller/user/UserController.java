@@ -47,13 +47,6 @@ public UserController(JdbcTemplate jdbcTemplate){
     }
     @PutMapping("/user")
     public void updateUser(@RequestBody UserUpdateRequest request){
-    String readSql = " * FROM user WHERE id = ?"; //유저가 존재하는지 SELECT 통하여 확인
-    boolean isUserNotExist = jdbcTemplate.query(readSql, (rs, rowNum) -> 0, request.getId()).isEmpty();
-    if(isUserNotExist){
-        throw new IllegalArgumentException();
-    }
-    String sql = "UPDATE user SET name = ? WHERE id = ?";
-    jdbcTemplate.update(sql, request.getName(),request.getId());
 
     }
 
@@ -63,6 +56,9 @@ public UserController(JdbcTemplate jdbcTemplate){
     jdbcTemplate.update(sql, name);
     }
 
-
+    @GetMapping("/user/error-test")
+    public void errorTest(){
+    throw new IllegalArgumentException();
+    }
 
 }
